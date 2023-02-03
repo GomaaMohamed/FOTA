@@ -1,0 +1,121 @@
+
+/*
+ * 
+	#if       SPI_MAP_PINS == SPI_DEFAULT_MAP
+	
+	    #if   SPI_MODE == SPI_MASTER_MODE
+		
+	     /* Initialize Master Pins */
+		 /* Set MOSI1 Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN7,OUTPUT_SPEED_2MHZ_AFPP);
+		 /* Set MISO1 Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN6,INPUT_FLOATING);
+		 /* Set SCK Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN5,OUTPUT_SPEED_2MHZ_AFPP);
+		 //GPIO_voidSetPinDirection(GPIOA,PIN4); Not Used in case of master
+		 SET_BIT(SPI->CR1,2);
+		 
+	    #elif   SPI_MODE == SPI_SLAVE_MODE
+		
+		 /* Initialize Slave Pins */
+		 /* Set MOSI1 Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN7,INPUT_FLOATING);
+		 /* Set MISO1 Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN6,OUTPUT_SPEED_2MHZ_AFPP);
+		 /* Set SCK Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN5,INPUT_FLOATING);
+		 /* Set NSS Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN4,INPUT_FLOATING);
+		 CLR_BIT(SPI->CR1,2);
+		#endif 
+	#elif     SPI_MAP_PINS == SPI_SECONED_MAP
+	
+	
+	  /* Remap Periphiral Pins */
+	  AFIO_voidRemapPeriphralPins(AFIO_REMAP_SPI1);
+	  
+	   #if   SPI_MODE == SPI_MASTER_MODE
+	   
+	     /* Initialize Master Pins */
+		 /* Set MOSI1 Pin */
+		 GPIO_voidSetPinDirection(GPIOB,PIN5,OUTPUT_SPEED_2MHZ_AFPP);
+		 /* Set MISO1 Pin */
+		 GPIO_voidSetPinDirection(GPIOB,PIN4,INPUT_FLOATING);
+		 /* Set SCK Pin */
+		 GPIO_voidSetPinDirection(GPIOB ,PIN3,OUTPUT_SPEED_2MHZ_AFPP);
+		 //GPIO_voidSetPinDirection(GPIOA,PIN15); Not Used in case of master
+		 SET_BIT(SPI->CR1,2);
+		 
+	   #elif   SPI_MODE == SPI_SLAVE_MODE
+	    /* Initialize Slave Pins */
+		 /* Set MOSI1 Pin */
+		 GPIO_voidSetPinDirection(GPIOB,PIN5,INPUT_FLOATING);
+		 /* Set MISO1 Pin */
+		 GPIO_voidSetPinDirection(GPIOB,PIN4,OUTPUT_SPEED_2MHZ_AFPP);
+		 /* Set SCK Pin */
+		 GPIO_voidSetPinDirection(GPIOB,PIN3,INPUT_FLOATING);
+		 /* Set NSS Pin */
+		 GPIO_voidSetPinDirection(GPIOA,PIN15,INPUT_FLOATING);
+	      CLR_BIT(SPI->CR1,2);
+	   
+		 /* Initialize Slave Pins */
+	   #endif 
+	#endif  
+    /* Disable SPI */
+	CLR_BIT(SPI->CR1,6);
+	/* Set The First Bit to send */
+	#if      SPI_FIRST_BIT_TO_SEND == SPI_MSB_FIRST
+	     CLR_BIT(SPI->CR1,7);
+	#elif   SPI_FIRST_BIT_TO_SEND == SPI_LSB_FIRST
+	     SET_BIT(SPI->CR1,7);
+	#endif
+	/* Set Data Frame Format to send */
+	#if      SPI_DATA_FRAME_FORMAT == SPI_8BIT_FORMAT
+	    CLR_BIT(SPI->CR1,11);
+	#elif   SPI_DATA_FRAME_FORMAT == SPI_16BIT_FORMAT
+	    SET_BIT(SPI->CR1,11);
+	#endif
+	/* Set Clock Polarity */
+	#if      SPI_CLOCK_POLARITY  == SPI_0_POLARITY
+	     /* Clock Polarity 0 */
+		 CLR_BIT(SPI->CR1,1);
+	#elif   SPI_CLOCK_POLARITY  == SPI_1_POLARITY
+	     /* Clock Polarity 1 */
+		 SET_BIT(SPI->CR1,1);
+	
+	#endif
+	/* Set Clock Phase */
+	#if      SPI_CLOCK_PHASE  == SPI_FIRST_TRANSITION
+	     /* Clock Phase First */
+		 CLR_BIT(SPI->CR1,0);
+	#elif   SPI_CLOCK_PHASE  == SPI_SECOND_TRANSITION
+	     /* Clock Phase Second transition */
+		 SET_BIT(SPI->CR1,0);
+	
+	#endif
+	/* Set Baud Rate Control */
+		 SPI->CR1 &=~ (0b111<<3);
+
+	    SPI->CR1 |= (SPI_BAUD_RATE<<3);
+	    //SPI->CR2 |= 0x4;
+	    SET_BIT(SPI->CR1,9);
+	    SET_BIT(SPI->CR1,8);
+	/* Enable SPI */
+	SET_BIT(SPI->CR1,6);
+	*/
+ */
+ 
+ 
+ 
+ 
+	RCC_voidEnableClock(RCC_APB2,SPI1);
+	AFIO_voidInit();
+	GPIO_voidSetPinDirection(SPI_SLAVE_SELECT_PIN,OUTPUT_SPEED_10MHZ_PP);
+	/* Set MOSI1 Pin */
+			 GPIO_voidSetPinDirection(GPIOA,PIN7,OUTPUT_SPEED_10MHZ_AFPP);
+			 /* Set MISO1 Pin */
+			 GPIO_voidSetPinDirection(GPIOA,PIN6,INPUT_FLOATING);
+			 /* Set SCK Pin */
+			 GPIO_voidSetPinDirection(GPIOA,PIN5,OUTPUT_SPEED_10MHZ_AFPP);
+			 //GPIO_voidSetPinDirection(GPIOA,PIN4); Not Used in case of master
+	SPI->CR1=0x0347;
